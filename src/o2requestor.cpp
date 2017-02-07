@@ -58,6 +58,18 @@ int O2Requestor::put(const QNetworkRequest &req, const QByteArray &data) {
     return id_;
 }
 
+int O2Requestor::deleteResource(const QNetworkRequest & req)
+{
+	if (-1 == setup(req, QNetworkAccessManager::DeleteOperation)) {
+		return -1;
+	}
+	reply_ = manager_->deleteResource(request_);
+	timedReplies_.add(reply_);
+	connect(reply_, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onRequestError(QNetworkReply::NetworkError)), Qt::QueuedConnection);
+	connect(reply_, SIGNAL(finished()), this, SLOT(onRequestFinished()), Qt::QueuedConnection);
+	return id_;
+}
+
 void O2Requestor::onRefreshFinished(QNetworkReply::NetworkError error) {
     if (status_ != Requesting) {
         qWarning() << "O2Requestor::onRefreshFinished: No pending request";
