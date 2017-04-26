@@ -6,6 +6,8 @@
 #include <QUrl>
 #if QT_VERSION >= 0x050000
 #include <QUrlQuery>
+#include <QJsonDocument>
+#include <QJsonObject>
 #endif
 
 #include "o2facebook.h"
@@ -68,13 +70,9 @@ void O2Facebook::onTokenReplyFinished() {
     if (tokenReply->error() == QNetworkReply::NoError) {
         // Process reply
         QByteArray replyData = tokenReply->readAll();
-        QVariantMap reply;
-        foreach (QString pair, QString(replyData).split("&")) {
-            QStringList kv = pair.split("=");
-            if (kv.length() == 2) {
-                reply.insert(kv[0], kv[1]);
-            }
-        }
+        QJsonDocument itemDoc = QJsonDocument::fromJson(replyData);
+        QJsonObject rootObject = itemDoc.object();
+        QVariantMap reply = rootObject.toVariantMap();
 
         // Interpret reply
         setToken(reply.value(O2_OAUTH2_ACCESS_TOKEN, QString()).toString());
