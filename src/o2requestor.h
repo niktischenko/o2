@@ -7,6 +7,7 @@
 #include <QNetworkAccessManager>
 #include <QUrl>
 #include <QByteArray>
+#include <QHttpMultiPart>
 
 #include "o0export.h"
 #include "o2reply.h"
@@ -29,10 +30,12 @@ public Q_SLOTS:
     /// Make a POST request.
     /// @return Request ID or -1 if there are too many requests in the queue.
     int post(const QNetworkRequest &req, const QByteArray &data);
+    int post(const QNetworkRequest &req, QHttpMultiPart* data);
 
     /// Make a PUT request.
     /// @return Request ID or -1 if there are too many requests in the queue.
     int put(const QNetworkRequest &req, const QByteArray &data);
+    int put(const QNetworkRequest &req, QHttpMultiPart* data);
 
 Q_SIGNALS:
     /// Emitted when a request has been completed or failed.
@@ -74,6 +77,7 @@ protected:
     O2 *authenticator_;
     QNetworkRequest request_;
     QByteArray data_;
+    QHttpMultiPart* multipartData_;
     QNetworkReply *reply_;
     Status status_;
     int id_;
@@ -81,6 +85,7 @@ protected:
     QUrl url_;
     O2ReplyList timedReplies_;
     QNetworkReply::NetworkError error_;
+    bool rawData_;
 };
 
 #endif // O2REQUESTOR_H
