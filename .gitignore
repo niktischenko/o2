@@ -1,2 +1,5 @@
 *CMakeLists.txt.user
 _build/
+build32/
+build64/
+bin/
